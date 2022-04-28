@@ -63,12 +63,12 @@
                             <?php foreach($data->contacts as $contact): ?>
                             <?php if($contact->contact_as == 'reporter'): ?>
                             <div class="form-group">
-                                <label for="">No WA Pelapor</label>
+                                <label for="">No WA Pelapor <a href="<?=routeTo('cases/resend',['id'=>$contact->id])?>">Resend Notif</a></label>
                                 <input type="number" disabled class="form-control" value="<?=$contact->phone?>">
                             </div>
                             <?php elseif($contact->contact_as == 'reported'): ?>
                             <div class="form-group">
-                                <label for="">No WA Terlapor</label>
+                                <label for="">No WA Terlapor <a href="<?=routeTo('cases/resend',['id'=>$contact->id])?>">Resend Notif</a></label>
                                 <input type="number" disabled class="form-control" value="<?=$contact->phone?>">
                             </div>
                             <?php else: ?>
@@ -77,7 +77,7 @@
                                 <input type="text" disabled class="form-control" value="<?=$contact->name?>">
                             </div>
                             <div class="form-group">
-                                <label for="">No WA Penyidik</label>
+                                <label for="">No WA Penyidik <a href="<?=routeTo('cases/resend',['id'=>$contact->id])?>">Resend Notif</a></label>
                                 <input type="number" disabled class="form-control" value="<?=$contact->phone?>">
                             </div>
                             <?php endif ?>

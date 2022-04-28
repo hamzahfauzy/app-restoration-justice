@@ -46,6 +46,8 @@
                                 <?php if(!isset($_SESSION['otp']['username'])): ?>
                                 <label for="">No. WA (62xxx)</label>
                                 <input type="text" name="username" id="" class="form-control mb-2" placeholder="Nomor WA Disini...">
+                                <label for="">Kode Tiket Perkara</label>
+                                <input type="text" name="tiket" id="" class="form-control mb-2" placeholder="Tiket Disini...">
                                 <button class="btn btn-primary btn-block btn-round" name="get_otp">Kirim OTP</button>
                                 <?php else: ?>
                                 <label for="">OTP</label>

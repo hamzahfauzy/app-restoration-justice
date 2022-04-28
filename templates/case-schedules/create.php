@@ -35,6 +35,8 @@
                                         $type  = $field_data['type'];
                                     }
                                     $label = _ucwords($label);
+                                    if($label == 'Tempat') $label .= " (Jika jadwal online maka isikan Online)";
+                                    if($label == 'Link') $label .= " (Kosongkan jika jadwal bukan online)";
                                 ?>
                                 <div class="form-group">
                                     <label for=""><?=$label?></label>

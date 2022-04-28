@@ -55,7 +55,7 @@ if(request() == 'POST')
 
     $insert = $db->insert($table,$data);
 
-    $message = "Perkara dengan judul $insert->title telah di buat dengan nomor tiket C".$insert->id."-".strtotime($data->created_at);
+    $message = "Perkara dengan judul $insert->title telah di buat dengan nomor tiket C".$insert->id."-".strtotime($insert->created_at);
     $message .= "Silahkan lihat pembaharuan perkara di ".routeTo('cek-perkara');
 
     foreach($_POST['case_contacts'] as $key => $val)

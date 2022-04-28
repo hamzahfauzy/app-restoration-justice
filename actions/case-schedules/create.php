@@ -15,8 +15,7 @@ if(request() == 'POST')
     Validation::run([
         'case_id' => ['required','exists:cases,id,'.$_GET['case_id']],
         'date' => ['required'],
-        'place' => ['required'],
-        'meeting_url' => ['required'],
+        'place' => ['required']
     ],$_POST['case_schedules']);
 
     $insert = $db->insert($table,$_POST[$table]);

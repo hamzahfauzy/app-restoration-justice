@@ -16,15 +16,41 @@ if(request() == 'POST')
         
         if($user)
         {
-            $otp = generateOTP();
-            $db->update('users',[
-                'password' => md5($otp),
-            ],[
-                'id' => $user->id
+            $token = $_POST['tiket'];
+            $token = explode('-',$token);
+            $id    = str_replace('C','',$token[0]);
+            $time  = date('Y-m-d H:i:s', $token[1]);
+
+            $case = $db->single('cases',[
+                'id' => $id,
+                'created_at' => $time
             ]);
 
-            Fonnte::send($user->username, 'Kode OTP anda adalah '.$otp);
-            $_SESSION['otp']['username'] = $_POST['username'];
+            if($case)
+            {
+                $contact = $db->exists('case_contacts',[
+                    'case_id' => $id,
+                    'phone' => $user->username
+                ]);
+
+                if($contact)
+                {
+                    $otp = generateOTP();
+                    $db->update('users',[
+                        'password' => md5($otp),
+                    ],[
+                        'id' => $user->id
+                    ]);
+
+                    Fonnte::send($user->username, 'Kode OTP anda adalah '.$otp);
+                    $_SESSION['otp']['username'] = $_POST['username'];
+                    $_SESSION['otp']['case_id'] = $id;
+                    header('location:'.routeTo('cek-perkara'));
+                    die();
+                }
+            }
+
+            set_flash_msg(['error'=>'Login Gagal! Nomor Tiket tidak ditemukan']);
             header('location:'.routeTo('cek-perkara'));
             die();
         }
@@ -49,6 +75,8 @@ if(request() == 'POST')
                 'id' => $user->id
             ]);
 
+            $user->case_id = $_SESSION['otp']['case_id'];
+
             unset($_SESSION['otp']);
             $_SESSION['cek_perkara'] = $user;
             header('location:'.routeTo('cek-perkara'));
@@ -66,7 +94,7 @@ $auth = $_SESSION['cek_perkara']??false;
 $cases = [];
 if(isset($auth->id))
 {
-    $db->query = "SELECT * FROM cases WHERE EXISTS (SELECT case_id FROM case_contacts WHERE cases.id = case_contacts.case_id AND case_contacts.phone = '$auth->username')";
+    $db->query = "SELECT * FROM cases WHERE id = $auth->case_id";
 
     $cases = $db->exec('all');
 
