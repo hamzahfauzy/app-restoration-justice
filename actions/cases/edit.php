@@ -30,18 +30,50 @@ $data->contacts = $db->all('case_contacts',[
 if(request() == 'POST')
 {
 
+    $data = $_POST[$table];
+    $contact = $_POST['case_contacts'];
+
+    if(get_role(auth()->user->id)->name == 'Admin')
+    {
+        $user_office = $db->single('user_office',[
+            'user_id' => auth()->user->id
+        ]);
+
+        $data['office_id'] = $user_office->office_id;
+    }
+
+    Validation::run([
+        'office_id' => ['required','exists:offices,id,'.$data['office_id']],
+        'title' => ['required'],
+        'date' => ['required'],
+        'location' => ['required'],
+        'reporter' => ['required'],
+        'reported' => ['required'],
+        'description' => ['required'],
+        'loss' => ['required'],
+        'wa_reporter' => ['required','number'],
+        'wa_reported' => ['required','number'],
+        'investigator_name' => ['required'],
+        'investigator_phone' => ['required','number'],
+    ], array_merge($data, [
+        'wa_reporter' => $contact['reporter'],
+        'wa_reported' => $contact['reported'],
+        'investigator_name' => $contact['investigator']['name'],
+        'investigator_phone' => $contact['investigator']['phone']
+    ]));
+
     if(isset($_FILES['file_url']) && !empty($_FILES['file_url']['name']))
     {
         $ext  = pathinfo($_FILES['file_url']['name'], PATHINFO_EXTENSION);
         $name = strtotime('now').'.'.$ext;
         $file = 'uploads/documents/'.$name;
         copy($_FILES['file_url']['tmp_name'],$file);
-        $_POST[$table]['file_url'] = $file;
+        $data['file_url'] = $file;
     }
 
-    $_POST[$table]['user_id'] = auth()->user->id;
+    $data['user_id'] = auth()->user->id;
 
-    $edit = $db->update($table,$_POST[$table],[
+    $edit = $db->update($table,$data,[
         'id' => $_GET['id']
     ]);
 
